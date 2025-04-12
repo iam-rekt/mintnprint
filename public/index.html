@@ -3,15 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="fc:frame" content='{"version":"next","imageUrl":"https://mintnprintv1-one.vercel.app/welcome.png","button":{"title":"Generate Image","action":{"type":"launch_frame","name":"AI Image Generator","url":"https://mintnprintv1-one.vercel.app/","splashImageUrl":"https://mintnprintv1-one.vercel.app/welcome.png","splashBackgroundColor":"#3557B7"}}}' />
+<meta property="fc:frame" content="vNext" />
+<meta property="fc:frame:image" content="https://mintnprintv1-one.vercel.app/welcome.png" />
 <meta property="og:image" content="https://mintnprintv1-one.vercel.app/welcome.png" />
+<meta property="fc:frame:post_url" content="https://mintnprintv1-one.vercel.app/" />
+<meta property="fc:frame:button:1" content="Generate Image" />
+<meta property="fc:frame:input:text" content="Enter prompt..." />
 <meta property="og:title" content="AI Image Generator & NFT Minter" />
 <meta property="og:description" content="Generate AI images with DALL-E and mint them as NFTs from Farcaster" />
 <link rel="manifest" href="https://mintnprintv1-one.vercel.app/manifest.json">
 <meta name="theme-color" content="#3557B7">
-<meta name="sdk:endpoint" content="https://mintnprintv1-one.vercel.app/sdk">
-<meta name="sdk:version" content="0.8.0">
-<meta name="miniapp:manifest" content="https://mintnprintv1-one.vercel.app/sdk/manifest">
 <title>AI Image Generator Frame</title>
 <style>
   body {
@@ -50,10 +51,6 @@
     background-color: rgba(229, 57, 53, 0.1);
   }
 </style>
-<!-- Load Farcaster Frame SDK from CDN (stable version) -->
-<script type="module" src="https://cdn.jsdelivr.net/npm/@farcaster/frame-sdk@0.8.0/dist/index.min.js"></script>
-<!-- Load our client side code -->
-<script type="module" src="https://mintnprintv1-one.vercel.app/client.js"></script>
 </head>
 <body>
 <div id="app">
