@@ -162,235 +162,6 @@ const app = new Frog({
 // Register our SDK connector router
 app.hono.route('/sdk', sdkRouter);
 
-// --- START: Manual Static File Handler (for Debugging) ---
-// **Place this BEFORE other middleware/routes**
-app.hono.get('/public/*', async (c) => {
-  const requestPath = c.req.path;
-  console.log(`[PUBLIC_HANDLER] Serving file: ${requestPath}`);
-
-  // Security: prevent directory traversal
-  if (requestPath.includes('..')) {
-    return c.notFound();
-  }
-
-  // Get the actual filename from the path
-  const filename = requestPath.split('/').pop() || '';
-  const filePath = path.join(process.cwd(), requestPath);
-  
-  try {
-    const stats = await fs.promises.stat(filePath);
-    if (!stats.isFile()) {
-      return c.notFound();
-    }
-
-    // Set appropriate content type based on file extension
-    const ext = path.extname(filename).toLowerCase();
-    let contentType = 'application/octet-stream';
-    
-    if (ext === '.svg') {
-      contentType = 'image/svg+xml';
-    } else if (ext === '.png') {
-      contentType = 'image/png';
-    } else if (ext === '.html') {
-      contentType = 'text/html';
-    } else if (ext === '.js') {
-      contentType = 'application/javascript';
-    }
-
-    // Read file and serve
-    const fileContent = await fs.promises.readFile(filePath);
-    c.header('Content-Type', contentType);
-    c.header('Access-Control-Allow-Origin', '*');
-    
-    console.log(`[PUBLIC_HANDLER] Successfully served ${filePath} as ${contentType}`);
-    return c.body(fileContent);
-  } catch (error: any) {
-    console.error(`[PUBLIC_HANDLER] Error: ${error.message}`);
-    return c.notFound();
-  }
-});
-// --- END: Manual Static File Handler ---
-
-// Serve client.js from the root path
-app.hono.get('/client.js', async (c) => {
-  console.log(`[JS_HANDLER] Serving client.js file`);
-  const filePath = path.join(process.cwd(), 'public', 'client.js');
-  
-  try {
-    const fileContent = await fs.promises.readFile(filePath);
-    c.header('Content-Type', 'application/javascript');
-    c.header('Access-Control-Allow-Origin', '*');
-    
-    console.log(`[JS_HANDLER] Successfully served client.js`);
-    return c.body(fileContent);
-  } catch (error: any) {
-    console.error(`[JS_HANDLER] Error serving client.js: ${error.message}`);
-    return c.notFound();
-  }
-});
-
-// Serve frame.html from the root path for direct access
-app.hono.get('/frame.html', async (c) => {
-  console.log(`[HTML_HANDLER] Serving frame.html file`);
-  const filePath = path.join(process.cwd(), 'public', 'frame.html');
-  
-  try {
-    const fileContent = await fs.promises.readFile(filePath);
-    c.header('Content-Type', 'text/html');
-    c.header('Access-Control-Allow-Origin', '*');
-    
-    console.log(`[HTML_HANDLER] Successfully served frame.html`);
-    return c.body(fileContent);
-  } catch (error: any) {
-    console.error(`[HTML_HANDLER] Error serving frame.html: ${error.message}`);
-    return c.notFound();
-  }
-});
-
-// Serve manifest.json from the root path
-app.hono.get('/manifest.json', async (c) => {
-  console.log(`[MANIFEST_HANDLER] Serving manifest.json file`);
-  const filePath = path.join(process.cwd(), 'public', 'manifest.json');
-  
-  try {
-    const fileContent = await fs.promises.readFile(filePath);
-    c.header('Content-Type', 'application/json');
-    c.header('Access-Control-Allow-Origin', '*');
-    
-    console.log(`[MANIFEST_HANDLER] Successfully served manifest.json`);
-    return c.body(fileContent);
-  } catch (error: any) {
-    console.error(`[MANIFEST_HANDLER] Error serving manifest.json: ${error.message}`);
-    return c.notFound();
-  }
-});
-
-// --- START: Dedicated Image Handler ---
-app.hono.get('/image', async (c) => {
-  // Extract image parameter from query
-  const imageParam = c.req.query('image');
-  console.log(`[IMAGE_HANDLER] Receiving image request with param: ${imageParam?.substring(0, 50)}...`);
-  
-  // Set necessary headers for Farcaster frames compatibility
-  c.header('Access-Control-Allow-Origin', '*');
-  c.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  c.header('Access-Control-Allow-Headers', '*');
-  c.header('ngrok-skip-browser-warning', '1');
-  c.header('Cache-Control', 'public, max-age=86400');
-
-  // Default to welcome image if no parameter is provided
-  const imageName = imageParam || 'welcome';
-  console.log(`[IMAGE_HANDLER] Looking for image file: ${imageName}`);
-
-  try {
-    // Check if the image param starts with "generated-" - these are our DALL-E images
-    if (imageName.startsWith('generated-')) {
-      // First try PNG for generated images
-      const pngPath = path.join(process.cwd(), 'public', `${imageName}.png`);
-      try {
-        const fileContent = await fs.promises.readFile(pngPath);
-        
-        // Validate the PNG file format by checking the PNG header
-        if (fileContent.length < 8 || 
-            fileContent[0] !== 0x89 || 
-            fileContent[1] !== 0x50 || // P
-            fileContent[2] !== 0x4E || // N
-            fileContent[3] !== 0x47 || // G
-            fileContent[4] !== 0x0D || // CR
-            fileContent[5] !== 0x0A || // LF
-            fileContent[6] !== 0x1A || // EOF
-            fileContent[7] !== 0x0A) { // LF
-          console.log(`[IMAGE_HANDLER] Generated PNG has invalid header, serving fallback`);
-          throw new Error('Invalid PNG format');
-        }
-        
-        console.log(`[IMAGE_HANDLER] Successfully read PNG image: ${pngPath}`);
-        c.header('Content-Type', 'image/png');
-        return c.body(fileContent);
-      } catch (error) {
-        console.log(`[IMAGE_HANDLER] Generated image PNG not found or invalid, trying without extension`);
-        
-        // Try without extension as fallback
-        const noExtPath = path.join(process.cwd(), 'public', imageName);
-        try {
-          const fileContent = await fs.promises.readFile(noExtPath);
-          c.header('Content-Type', 'image/png');
-          console.log(`[IMAGE_HANDLER] Successfully read image without extension: ${noExtPath}`);
-          return c.body(fileContent);
-        } catch (error) {
-          console.log(`[IMAGE_HANDLER] Generated image not found with or without extension`);
-          throw new Error('Generated image not found');
-        }
-      }
-    }
-    
-    // Standard image handling for non-generated images
-    // First try PNG
-    const pngPath = path.join(process.cwd(), 'public', `${imageName}.png`);
-    try {
-      const fileContent = await fs.promises.readFile(pngPath);
-      console.log(`[IMAGE_HANDLER] Successfully read PNG image: ${pngPath}`);
-      c.header('Content-Type', 'image/png');
-      return c.body(fileContent);
-    } catch (error: any) {
-      console.log(`[IMAGE_HANDLER] PNG not found, trying SVG as fallback`);
-      
-      // Try SVG as fallback
-      const svgPath = path.join(process.cwd(), 'public', `${imageName}.svg`);
-      try {
-        const svgContent = await fs.promises.readFile(svgPath);
-        c.header('Content-Type', 'image/svg+xml');
-        console.log(`[IMAGE_HANDLER] Successfully read SVG image: ${svgPath}`);
-        return c.body(svgContent);
-      } catch (error: any) {
-        console.log(`[IMAGE_HANDLER] SVG fallback not found, using default fallback`);
-        throw new Error('Image not found');
-      }
-    }
-  } catch (error: any) {
-    // Use a more informative but less alarming message
-    console.log(`[IMAGE_HANDLER] Using default image for '${imageName}' - this is normal during testing`);
-    
-    // Ultimate fallback to error image
-    try {
-      const fallbackPath = path.join(process.cwd(), 'public', 'welcome.svg');
-      if (fs.existsSync(fallbackPath)) {
-        const fallbackContent = await fs.promises.readFile(fallbackPath);
-        c.header('Content-Type', 'image/svg+xml');
-        console.log(`[IMAGE_HANDLER] Serving welcome fallback image`);
-        return c.body(fallbackContent);
-      }
-
-      // If welcome.svg doesn't exist, try error-image.svg
-      const errorPath = path.join(process.cwd(), 'public', 'error-image.svg');
-      if (fs.existsSync(errorPath)) {
-        const errorContent = await fs.promises.readFile(errorPath);
-        c.header('Content-Type', 'image/svg+xml');
-        console.log(`[IMAGE_HANDLER] Serving error fallback image`);
-        return c.body(errorContent);
-      }
-      
-      // If all else fails, generate a basic SVG on the fly
-      console.warn(`[IMAGE_HANDLER] No fallback images found, generating dynamic SVG`);
-    } catch (fallbackError: any) {
-      console.warn(`[IMAGE_HANDLER] Fallback image not found, generating dynamic SVG`);
-    }
-    
-    // Generate a basic SVG on the fly
-    const dynamicSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
-      <rect width="100%" height="100%" fill="#3557B7"/>
-      <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="48" fill="white">
-        AI Image Generator
-      </text>
-    </svg>`;
-    
-    c.header('Content-Type', 'image/svg+xml');
-    console.log(`[IMAGE_HANDLER] Serving dynamic SVG fallback`);
-    return c.body(dynamicSvg);
-  }
-});
-// --- END: Dedicated Image Handler ---
-
 // --- SIMPLIFIED MIDDLEWARE: Replace all other middleware with this ---
 app.hono.use('*', async (c, next) => {
   // Log all incoming requests for debugging
@@ -451,7 +222,7 @@ app.hono.get('/', (c) => {
 <html>
 <head>
   <meta property="fc:frame" content="vNext" />
-  <meta property="fc:frame:image" content="${baseUrl}/image?image=welcome" />
+  <meta property="fc:frame:image" content="${baseUrl}/welcome.png" />
   <meta property="fc:frame:post_url" content="${baseUrl}/" />
   <meta property="fc:frame:button:1" content="Generate Image" />
   <meta property="fc:frame:input:text" content="Enter prompt..." />
@@ -506,7 +277,7 @@ app.frame('/', (c) => {
   // A better approach would use fid or a session identifier
   delete imageStore['user']; 
   
-  const welcomeImageUrl = `${BASE_URL}/image?image=welcome`;
+  const welcomeImageUrl = `${BASE_URL}/welcome.png`;
   
   // This route will handle POST requests from Farcaster frames
   // when users click buttons or submit input
@@ -540,7 +311,7 @@ app.frame('/generate', async (c) => {
       console.log('[OPENAI_IMAGE] API key not configured, using fallback image');
       
       // Use a placeholder image for testing when neither API is available
-      imageUrl = `${BASE_URL}/image?image=test-image`;
+      imageUrl = `${BASE_URL}/test-image.svg`;
       
       // Create a test image if it doesn't exist
       try {
@@ -635,7 +406,7 @@ app.frame('/generate', async (c) => {
         await fs.promises.writeFile(imagePath, imageResponse.data);
         
         // Use the saved file URL - referencing the same filename that was saved
-        imageUrl = `${BASE_URL}/image?image=generated-${timestamp}`;
+        imageUrl = `${BASE_URL}/${imageName}`;
         console.log(`[OPENAI_IMAGE] Generated image saved at: ${imageUrl}`);
       } catch (err) {
         console.error('[OPENAI_IMAGE] Error generating image:', err);
@@ -643,7 +414,7 @@ app.frame('/generate', async (c) => {
         
         // Use a placeholder image instead of the error image
         console.log('[OPENAI_IMAGE] Using placeholder image due to error');
-        imageUrl = `${BASE_URL}/image?image=test-image`;
+        imageUrl = `${BASE_URL}/test-image.svg`;
       }
     }
   } else {
@@ -705,7 +476,7 @@ app.frame('/generate', async (c) => {
         await fs.promises.writeFile(imagePath, imageResponse.data);
         
         // Use the saved file URL - referencing the same filename that was saved
-        localImageUrl = `${BASE_URL}/image?image=generated-${timestamp}`;
+        localImageUrl = `${BASE_URL}/${imageName}`;
         console.log(`[GOOGLE_IMAGE] Generated image saved at: ${localImageUrl}`);
       } catch (err) {
         console.error('[GOOGLE_IMAGE] Error generating image:', err);
@@ -713,7 +484,7 @@ app.frame('/generate', async (c) => {
         
         // Use a placeholder image instead of the error image
         console.log('[GOOGLE_IMAGE] Using placeholder image due to error');
-        localImageUrl = `${BASE_URL}/image?image=test-image`;
+        localImageUrl = `${BASE_URL}/test-image.svg`;
       }
       
       // Set the final image URL
@@ -724,7 +495,7 @@ app.frame('/generate', async (c) => {
       
       // Use a placeholder image instead of the error image
       console.log('[GOOGLE_IMAGE] Using placeholder image due to error');
-      imageUrl = `${BASE_URL}/image?image=test-image`;
+      imageUrl = `${BASE_URL}/test-image.svg`;
     }
   }
 
@@ -759,6 +530,10 @@ app.frame('/generate', async (c) => {
 
 // Add transaction verification function
 async function verifyTransaction(txHash: string): Promise<boolean> {
+  console.log(`Verifying transaction: ${txHash}`);
+  // Replace with actual transaction verification logic
+  await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate network delay
+  console.log(`Transaction ${txHash} verified (simulated)`);
   try {
     // Use Base network's public RPC to check transaction status
     const response = await axios.post('https://mainnet.base.org', {
