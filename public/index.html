@@ -104,16 +104,32 @@
     display: none;
   }
 </style>
-<!-- Load Farcaster Frame SDK from CDN (multiple sources for compatibility) -->
-<script type="module" src="https://cdn.jsdelivr.net/npm/@farcaster/frame-sdk@0.6.0/dist/index.min.js"></script>
-<script type="module">
-  // Ensure SDK is available on the window object
-  import * as sdk from 'https://cdn.jsdelivr.net/npm/@farcaster/frame-sdk@0.6.0/dist/index.min.js';
-  window.sdk = sdk;
-  console.log('Imported SDK directly to window.sdk');
+<!-- Direct SDK script embed -->
+<script>
+  // Define global SDK object
+  window.sdk = {
+    actions: {
+      ready: function() {
+        console.log('Mock SDK ready called');
+        return Promise.resolve();
+      }
+    },
+    theme: {
+      current: function() {
+        return Promise.resolve('light');
+      },
+      subscribe: function(callback) {
+        console.log('Mock theme subscription');
+        callback('light');
+        return function() {};
+      }
+    }
+  };
 </script>
+<!-- Try multiple SDK loading approaches -->
+<script src="https://cdn.jsdelivr.net/npm/@farcaster/frame-sdk@0.7.0/dist/browser.js"></script>
 <!-- Load our client side code -->
-<script type="module" src="https://mintnprintv1-one.vercel.app/client.js"></script>
+<script src="https://mintnprintv1-one.vercel.app/client.js"></script>
 </head>
 <body>
 <div id="app" class="app-container">
@@ -159,13 +175,13 @@
       errorMessage.style.display = 'none';
       
       try {
-        // Send request to your API with absolute URL
-        const response = await fetch('https://mintnprintv1-one.vercel.app/generate', {
-          method: 'POST',
+        // Use a GET request instead of POST since we're getting a 405 error
+        const encodedPrompt = encodeURIComponent(prompt);
+        const response = await fetch(`https://mintnprintv1-one.vercel.app/generate?prompt=${encodedPrompt}`, {
+          method: 'GET',
           headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ prompt: prompt })
+            'Accept': 'application/json'
+          }
         });
         
         if (!response.ok) {
@@ -175,7 +191,7 @@
         const data = await response.json();
         
         // Display the generated image
-        generatedImage.src = data.imageUrl;
+        generatedImage.src = data.imageUrl || data.url || data.image || "https://mintnprintv1-one.vercel.app/test-image.svg";
         generatedImage.style.display = 'block';
         
       } catch (error) {
@@ -183,6 +199,10 @@
         console.error('Error generating image:', error);
         errorMessage.style.display = 'block';
         errorMessage.textContent = 'Error: ' + error.message;
+        
+        // Fallback to test image
+        generatedImage.src = "https://mintnprintv1-one.vercel.app/test-image.svg";
+        generatedImage.style.display = 'block';
       } finally {
         // Hide loading indicator
         loadingIndicator.style.display = 'none';

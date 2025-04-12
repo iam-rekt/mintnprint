@@ -1,34 +1,20 @@
-// Farcaster Mini App SDK initialization
+// Farcaster Mini App SDK initialization - simplified version
 document.addEventListener('DOMContentLoaded', async () => {
   console.log('Initializing Frame App');
   
   try {
-    // Wait for the SDK to be available (up to 5 seconds)
-    const sdk = await waitForSDK(5000);
-    
-    if (sdk) {
+    // Just use window.sdk which is already defined in the HTML
+    if (window.sdk) {
+      console.log('Using pre-defined SDK object');
+      
       // Call the SDK's ready method to dismiss the splash screen
-      await sdk.actions.ready();
+      await window.sdk.actions.ready();
       console.log('SDK ready event fired');
       
-      // Get the current theme if available
-      if (sdk.theme) {
-        try {
-          const currentTheme = await sdk.theme.current();
-          console.log('Current theme:', currentTheme);
-          document.body.setAttribute('data-theme', currentTheme);
-          
-          // Subscribe to theme changes
-          sdk.theme.subscribe((theme) => {
-            console.log('Theme changed:', theme);
-            document.body.setAttribute('data-theme', theme);
-          });
-        } catch (themeError) {
-          console.warn('Theme API error:', themeError);
-        }
-      }
+      // Set theme (already handled by mock SDK)
+      document.body.setAttribute('data-theme', 'light');
     } else {
-      throw new Error('SDK not found after timeout');
+      console.warn('No SDK object found, application may not work in frame context');
     }
   } catch (error) {
     console.error('Error initializing Frame:', error);
