@@ -1,4 +1,9 @@
 {
+  "accountAssociation": {
+    "header": "eyJmaWQiOjAsInR5cGUiOiJjdXN0b2R5Iiwia2V5IjoiMHgwIn0=",
+    "payload": "eyJkb21haW4iOiJtaW50bnByaW50djEtb25lLnZlcmNlbC5hcHAifQ==",
+    "signature": "0x0"
+  },
   "frame": {
     "version": "1",
     "name": "AI Image Generator & NFT Minter",
