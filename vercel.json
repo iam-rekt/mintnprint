@@ -16,6 +16,7 @@
     }
   ],
   "routes": [
+    { "src": "/.well-known/(.*)", "dest": "/public/.well-known/$1" },
     { "src": "/welcome.png", "dest": "/public/welcome.png" },
     { "src": "/test-image.svg", "dest": "/public/test-image.svg" },
     { "src": "/error-image.svg", "dest": "/public/error-image.svg" },

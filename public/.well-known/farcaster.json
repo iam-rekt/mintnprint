@@ -1,0 +1,12 @@
+{
+  "frame": {
+    "version": "1",
+    "name": "AI Image Generator & NFT Minter",
+    "iconUrl": "https://mintnprintv1.vercel.app/welcome.png",
+    "homeUrl": "https://mintnprintv1.vercel.app/",
+    "imageUrl": "https://mintnprintv1.vercel.app/welcome.png",
+    "buttonTitle": "Generate Image",
+    "splashImageUrl": "https://mintnprintv1.vercel.app/welcome.png",
+    "splashBackgroundColor": "#3557B7"
+  }
+} 

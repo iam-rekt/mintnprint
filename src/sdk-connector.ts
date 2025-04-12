@@ -54,12 +54,12 @@ sdkRouter.get('/manifest', (c) => {
     theme_color: '#3557B7',
     icons: [
       {
-        src: '/image?image=welcome',
+        src: '/welcome.png',
         sizes: '192x192',
         type: 'image/png'
       },
       {
-        src: '/image?image=welcome',
+        src: '/welcome.png',
         sizes: '512x512',
         type: 'image/png'
       }
