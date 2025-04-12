@@ -25,6 +25,8 @@ import * as dotenv from 'dotenv';
 import { OAuth2Client } from 'google-auth-library';
 import { GoogleAuth } from 'google-auth-library';
 import type { Context } from 'hono';
+// Import our SDK connector
+import sdkRouter from './sdk-connector.js';
 
 // Configure OnchainKit with CDP API Key only if it exists
 if (process.env.CDP_API_KEY) {
@@ -156,6 +158,9 @@ const app = new Frog({
   title: 'AI Image Generator & NFT Minter',
   verify: false
 });
+
+// Register our SDK connector router
+app.hono.route('/sdk', sdkRouter);
 
 // --- START: Manual Static File Handler (for Debugging) ---
 // **Place this BEFORE other middleware/routes**

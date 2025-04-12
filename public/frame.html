@@ -2,15 +2,60 @@
 <html>
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta property="fc:frame" content="vNext" />
 <meta property="fc:frame:image" content="https://mintnprintv1.vercel.app/image?image=welcome" />
 <meta property="og:image" content="https://mintnprintv1.vercel.app/image?image=welcome" />
 <meta property="fc:frame:post_url" content="https://mintnprintv1.vercel.app/" />
 <meta property="fc:frame:button:1" content="Generate Image" />
 <meta property="fc:frame:input:text" content="Enter prompt..." />
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#3557B7">
+<meta name="sdk:endpoint" content="/sdk">
+<meta name="sdk:version" content="0.8.0">
+<title>AI Image Generator Frame</title>
+<style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    color: #333;
+    transition: background-color 0.3s, color 0.3s;
+  }
+  body[data-theme="dark"] {
+    background-color: #121212;
+    color: #f5f5f5;
+  }
+  h1 {
+    font-size: 24px;
+    margin-bottom: 16px;
+  }
+  p {
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  .loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+</style>
+<!-- Load Farcaster Frame SDK -->
+<script type="module" src="https://framesjs.org/iframe.js"></script>
+<!-- Load our client side code -->
+<script type="module" src="/client.js"></script>
 </head>
 <body>
-<h1>AI Image Generator Frame</h1>
-<p>This is a Farcaster Frame for generating AI images.</p>
+<div id="app">
+  <h1>AI Image Generator Frame</h1>
+  <p>This is a Farcaster Frame for generating AI images with DALL-E.</p>
+  <p>Enter a prompt and click "Generate Image" to create AI artwork that you can mint as an NFT.</p>
+  
+  <div id="loading" class="loading" style="display: none;">
+    <p>Loading...</p>
+  </div>
+</div>
 </body>
 </html> 

@@ -1,0 +1,21 @@
+{
+  "name": "AI Image Generator & NFT Minter",
+  "short_name": "AI Gen",
+  "description": "Generate AI images and mint them as NFTs from Farcaster",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3557B7",
+  "icons": [
+    {
+      "src": "/image?image=welcome",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/image?image=welcome",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+} 
