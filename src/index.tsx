@@ -206,9 +206,9 @@ console.log(`Using ngrok subdomain: ${process.env.NGROK_SUBDOMAIN}`);
 
 // Add a standalone HTML endpoint for direct browser access
 app.hono.get('/', (c) => {
-  console.log('[ROOT_HANDLER] Serving frame HTML');
+  console.log('[ROOT_HANDLER] Serving root HTML (minimal)');
   
-  // Set important headers for frames
+  // Set important headers
   c.header('Content-Type', 'text/html');
   c.header('Access-Control-Allow-Origin', '*');
   c.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -217,52 +217,26 @@ app.hono.get('/', (c) => {
   // Base URL from environment variable or fallback
   const baseUrl = process.env.BASE_URL || 'https://mintnprintv1.vercel.app';
   
-  // Properly formatted Farcaster Frame with absolute URLs
+  // Minimal HTML for browser visits, letting Frog handle frame logic
   return c.body(`<!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta property="fc:frame" content="vNext" />
-  <meta property="fc:frame:image" content="${baseUrl}/welcome.png" />
-  <meta property="og:image" content="${baseUrl}/welcome.png" />
-  <meta property="fc:frame:post_url" content="${baseUrl}/" />
-  <meta property="fc:frame:button:1" content="Generate Image" />
-  <meta property="fc:frame:input:text" content="Enter prompt..." />
-  <meta property="og:title" content="AI Image Generator & NFT Minter" />
-  <meta property="og:description" content="Generate AI images with DALL-E and mint them as NFTs from Farcaster" />
+  <title>AI Image Generator & NFT Minter Frame</title>
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#3557B7">
+  <!-- Optional: Add SDK endpoint if needed for other integrations -->
   <meta name="sdk:endpoint" content="/sdk">
   <meta name="sdk:version" content="0.8.0">
   <meta name="miniapp:manifest" content="/sdk/manifest">
-  <title>AI Image Generator & NFT Minter</title>
-  <!-- Load Farcaster Frame SDK from CDN -->
-  <script type="module" src="https://cdn.jsdelivr.net/npm/@farcaster/frame-sdk/dist/index.min.js"></script>
-  <script>
-    // Log when the SDK is loaded
-    window.addEventListener('load', function() {
-      if (window.frame && window.frame.sdk) {
-        console.log('Farcaster Frame SDK loaded successfully via CDN');
-      } else if (window.sdk) {
-        console.log('Farcaster Frame SDK loaded successfully via direct access');
-      } else {
-        console.error('Farcaster Frame SDK failed to load');
-      }
-    });
-  </script>
-  <!-- Load our client side code -->
+  <!-- Load client-side JS if needed for browser interactions -->
   <script type="module" src="/client.js"></script>
 </head>
 <body>
   <div id="app">
     <h1>AI Image Generator & NFT Minter</h1>
-    <p>This is a Farcaster Frame for generating AI images with DALL-E.</p>
-    <p>Enter a prompt and click "Generate Image" to create AI artwork that you can mint as an NFT.</p>
-    
-    <div id="loading" class="loading" style="display: none;">
-      <p>Loading...</p>
-    </div>
+    <p>This is a Farcaster Frame. Please use it within a Farcaster client like Warpcast.</p>
   </div>
 </body>
 </html>`);
