@@ -4,6 +4,7 @@
   "icon": "https://mintnprintv1-one.vercel.app/welcome.png",
   "homepage": "https://mintnprintv1-one.vercel.app/",
   "description": "Generate AI images with DALL-E and mint them as NFTs from Farcaster",
+  "image": "https://mintnprintv1-one.vercel.app/welcome.png",
   "splashImage": "https://mintnprintv1-one.vercel.app/welcome.png",
   "splashBackgroundColor": "#3557B7",
   "capabilities": {
