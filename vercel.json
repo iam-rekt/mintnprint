@@ -1,11 +1,24 @@
 {
+  "version": 2,
   "builds": [
     {
-      "src": "dist/src/index.js",
+      "src": "dist/index.js",
       "use": "@vercel/node"
+    },
+    {
+      "src": "public/**",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
-    { "src": "/(.*)", "dest": "/dist/src/index.js" }
+    { "src": "/welcome.png", "dest": "/public/welcome.png" },
+    { "src": "/test-image.svg", "dest": "/public/test-image.svg" },
+    { "src": "/error-image.svg", "dest": "/public/error-image.svg" },
+    { "src": "/client.js", "dest": "/public/client.js" },
+    { "src": "/manifest.json", "dest": "/public/manifest.json" },
+    { "src": "/generated-*.png", "dest": "/public/generated-$1.png" },
+    { "src": "/", "dest": "/public/index.html" },
+    { "handle": "filesystem" },
+    { "src": "/(.*)", "dest": "/dist/index.js" }
   ]
 } 
