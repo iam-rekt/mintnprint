@@ -7,6 +7,12 @@
     }
   },
   "buildCommand": "chmod +x build.sh && ./build.sh",
-  "outputDirectory": "dist",
-  "installCommand": "pnpm install --no-frozen-lockfile"
+  "outputDirectory": "dist/public",
+  "installCommand": "pnpm install --no-frozen-lockfile",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/dist/index.js"
+    }
+  ]
 } 
