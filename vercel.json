@@ -50,6 +50,7 @@
     { "source": "/print/:path*", "destination": "/dist/index.js" },
     { "source": "/f/:path*", "destination": "/dist/index.js" },
     { "source": "/", "destination": "/dist/index.js" },
-    { "source": "/(.*)", "destination": "/public/index.html" }
+    { "source": "/(.*)", "destination": "/public/index.html" },
+    { "source": "/manifest", "destination": "/api/manifest" }
   ]
 } 
