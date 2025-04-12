@@ -1,11 +1,5 @@
 {
   "version": 2,
-  "functions": {
-    "dist/index.js": {
-      "runtime": "nodejs18.x",
-      "memory": 1024
-    }
-  },
   "buildCommand": "chmod +x build.sh && ./build.sh",
   "outputDirectory": "dist/public",
   "installCommand": "pnpm install --no-frozen-lockfile"
