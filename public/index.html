@@ -128,8 +128,32 @@
 </script>
 <!-- Try multiple SDK loading approaches -->
 <script src="https://cdn.jsdelivr.net/npm/@farcaster/frame-sdk@0.7.0/dist/browser.js"></script>
-<!-- Load our client side code -->
-<script src="https://mintnprintv1-one.vercel.app/client.js"></script>
+
+<!-- Inline client code instead of loading from URL -->
+<script>
+  // Minimal Frame SDK initialization that won't cause JSON parsing errors
+  console.log('Inline client code running...');
+
+  // When document is loaded
+  document.addEventListener('DOMContentLoaded', () => {
+    console.log('Document loaded');
+    
+    try {
+      // Call ready immediately
+      if (window.sdk && window.sdk.actions && window.sdk.actions.ready) {
+        window.sdk.actions.ready().then(() => {
+          console.log('SDK ready event fired');
+        }).catch(err => {
+          console.warn('Error calling ready:', err);
+        });
+      } else {
+        console.warn('SDK not available, skipping ready call');
+      }
+    } catch (error) {
+      console.error('Error in inline client code:', error);
+    }
+  });
+</script>
 </head>
 <body>
 <div id="app" class="app-container">

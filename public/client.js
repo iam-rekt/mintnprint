@@ -1,28 +1,31 @@
-// Farcaster Mini App SDK initialization - simplified version
-document.addEventListener('DOMContentLoaded', async () => {
-  console.log('Initializing Frame App');
+// Minimal Frame SDK initialization that won't cause JSON parsing errors
+console.log('Loading client.js...');
+
+// When document is loaded
+document.addEventListener('DOMContentLoaded', () => {
+  console.log('Client.js: Document loaded');
   
   try {
-    // Just use window.sdk which is already defined in the HTML
-    if (window.sdk) {
-      console.log('Using pre-defined SDK object');
-      
-      // Call the SDK's ready method to dismiss the splash screen
-      await window.sdk.actions.ready();
-      console.log('SDK ready event fired');
-      
-      // Set theme (already handled by mock SDK)
-      document.body.setAttribute('data-theme', 'light');
-    } else {
-      console.warn('No SDK object found, application may not work in frame context');
+    // Just make sure window.sdk exists
+    if (!window.sdk) {
+      window.sdk = {
+        actions: {
+          ready: function() {
+            console.log('Mock SDK ready called from client.js');
+            return Promise.resolve();
+          }
+        }
+      };
     }
+    
+    // Call ready immediately
+    window.sdk.actions.ready().then(() => {
+      console.log('SDK ready event fired from client.js');
+    }).catch(err => {
+      console.warn('Error calling ready:', err);
+    });
   } catch (error) {
-    console.error('Error initializing Frame:', error);
-    const errorElement = document.getElementById('error-message');
-    if (errorElement) {
-      errorElement.style.display = 'block';
-      errorElement.textContent = 'Error: ' + error.message;
-    }
+    console.error('Error in client.js:', error);
   }
 });
 
