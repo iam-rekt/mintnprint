@@ -5,7 +5,7 @@ export default function handler(req, res) {
     image: "https://mintnprintv1-one.vercel.app/welcome.png",
     url: "https://mintnprintv1-one.vercel.app",
     frames: {
-      version: "vNext",
+      version: "next",
       home: "https://mintnprintv1-one.vercel.app"
     }
   });
