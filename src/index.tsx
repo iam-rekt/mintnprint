@@ -382,17 +382,23 @@ app.hono.get('/', (c) => {
   c.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   c.header('Access-Control-Allow-Headers', '*');
   
-  // Absolute minimum Farcaster Frame with proper self-closing meta tags
+  // Base URL from environment variable or fallback
+  const baseUrl = process.env.BASE_URL || 'https://mintnprintv1.vercel.app';
+  
+  // Properly formatted Farcaster Frame with absolute URLs
   return c.body(`<!DOCTYPE html>
 <html>
 <head>
-<meta property="fc:frame" content="vNext" />
-<meta property="fc:frame:image" content="https://placehold.co/1200x630/3557B7/FFFFFF/png?text=AI+Image+Generator" />
-<meta property="fc:frame:post_url" content="${process.env.BASE_URL}/" />
-<meta property="fc:frame:button:1" content="Generate Image" />
-<meta property="fc:frame:input:text" content="Enter prompt..." />
+  <meta property="fc:frame" content="vNext" />
+  <meta property="fc:frame:image" content="${baseUrl}/image?image=welcome" />
+  <meta property="fc:frame:post_url" content="${baseUrl}/" />
+  <meta property="fc:frame:button:1" content="Generate Image" />
+  <meta property="fc:frame:input:text" content="Enter prompt..." />
+  <title>AI Image Generator & NFT Minter</title>
 </head>
 <body>
+  <h1>AI Image Generator & NFT Minter</h1>
+  <p>Interact with this Frame on Farcaster</p>
 </body>
 </html>`);
 });
@@ -2106,11 +2112,20 @@ app.frame('/print/size/:size', (c) => {
 });
 
 // Start the server using the Frog application's fetch handler
-serve({
-  fetch: app.fetch, // Use the fetch handler from the Frog app
-  port
-});
+if (process.env.NODE_ENV !== 'production') {
+  // Only run the server directly when not in production (local development)
+  const port = process.env.PORT ? parseInt(process.env.PORT) : 3000;
+  console.log(`Starting server on port ${port}...`);
+  console.log(`⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯`);
+  // Devtools URL is typically /dev relative to the Frog base path
+  console.log(`🐸 Frame Dev UI: http://localhost:${port}/dev`);
+  console.log(`⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯`);
+  
+  serve({
+    fetch: app.fetch, // Use the fetch handler from the Frog app
+    port
+  });
+}
 
-// Export the app for use with other hosting platforms
-// Depending on the platform, you might export app or app.hono
-export default app; // Export the main Frog app
+// For Vercel serverless deployment, export the fetch handler directly
+export default app.fetch;

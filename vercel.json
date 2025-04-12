@@ -1,21 +1,12 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "dist/index.js",
-      "use": "@vercel/node"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "dist/index.js"
-    }
-  ],
-  "build": {
-    "env": {
-      "NODE_ENV": "production"
+  "functions": {
+    "dist/index.js": {
+      "runtime": "nodejs18.x",
+      "memory": 1024
     }
   },
+  "buildCommand": "pnpm run build",
+  "outputDirectory": "dist",
   "installCommand": "pnpm install --no-frozen-lockfile"
 } 

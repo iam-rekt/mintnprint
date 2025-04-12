@@ -9,7 +9,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "node --import tsx --no-warnings --experimental-specifier-resolution=node src/index.tsx",
-    "start": "node --import tsx --no-warnings --experimental-specifier-resolution=node dist/index.js",
+    "start": "node dist/index.js",
     "build": "tsc && cp -r public dist/",
     "lint": "tsc --noEmit",
     "vercel-build": "tsc && cp -r public dist/"
