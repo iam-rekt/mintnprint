@@ -13,5 +13,11 @@
   "developer": {
     "name": "Frame Labs",
     "url": "https://mintnprintv1-one.vercel.app"
-  }
+  },
+  "buttons": [
+    {
+      "id": "generate",
+      "label": "Generate Image"
+    }
+  ]
 } 
