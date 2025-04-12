@@ -1,9 +1,15 @@
 {
   "version": 2,
+  "buildCommand": "pnpm run build",
+  "outputDirectory": "dist",
+  "framework": "node",
   "builds": [
     {
       "src": "dist/index.js",
-      "use": "@vercel/node"
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": ["dist/**"]
+      }
     },
     {
       "src": "public/**",
@@ -17,8 +23,17 @@
     { "src": "/client.js", "dest": "/public/client.js" },
     { "src": "/manifest.json", "dest": "/public/manifest.json" },
     { "src": "/generated-*.png", "dest": "/public/generated-$1.png" },
-    { "src": "/", "dest": "/public/index.html" },
+    { "src": "/favicon.ico", "dest": "/public/favicon.ico" },
+    { "src": "/robots.txt", "dest": "/public/robots.txt" },
+    { "src": "^/sdk.*", "dest": "/dist/index.js" },
+    { "src": "^/api/.*", "dest": "/dist/index.js" },
+    { "src": "^/dev.*", "dest": "/dist/index.js" },
+    { "src": "^/generate.*", "dest": "/dist/index.js" },
+    { "src": "^/mint.*", "dest": "/dist/index.js" },
+    { "src": "^/print.*", "dest": "/dist/index.js" },
+    { "src": "^/f/.*", "dest": "/dist/index.js" },
+    { "src": "/", "dest": "/dist/index.js" },
     { "handle": "filesystem" },
-    { "src": "/(.*)", "dest": "/dist/index.js" }
+    { "src": "/(.*)", "dest": "/public/index.html" }
   ]
 } 
