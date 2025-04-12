@@ -23,5 +23,21 @@
     "website": "https://mintnprintv1-one.vercel.app",
     "category": "creative",
     "permissions": ["notifications"]
+  },
+  "capabilities": {
+    "frame": {
+      "action": "view",
+      "post_url": "/",
+      "input": {
+        "text": {
+          "placeholder": "Enter prompt..."
+        }
+      },
+      "buttons": [
+        {
+          "label": "Generate Image"
+        }
+      ]
+    }
   }
 } 

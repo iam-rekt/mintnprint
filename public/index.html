@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta property="fc:frame" content="vNext" />
-<meta property="fc:frame:image" content="https://mintnprintv1.vercel.app/welcome.png" />
-<meta property="og:image" content="https://mintnprintv1.vercel.app/welcome.png" />
-<meta property="fc:frame:post_url" content="https://mintnprintv1.vercel.app/" />
+<meta property="fc:frame:image" content="/welcome.png" />
+<meta property="og:image" content="/welcome.png" />
+<meta property="fc:frame:post_url" content="/" />
 <meta property="fc:frame:button:1" content="Generate Image" />
 <meta property="fc:frame:input:text" content="Enter prompt..." />
 <meta property="og:title" content="AI Image Generator & NFT Minter" />
@@ -42,23 +42,20 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: 100px;
+  }
+  #error-message {
+    color: #e53935;
+    display: none;
+    border: 1px solid #e53935;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 4px;
+    background-color: rgba(229, 57, 53, 0.1);
   }
 </style>
-<!-- Load Farcaster Frame SDK from CDN -->
-<script type="module" src="https://cdn.jsdelivr.net/npm/@farcaster/frame-sdk/dist/index.min.js"></script>
-<script>
-  // Log when the SDK is loaded
-  window.addEventListener('load', function() {
-    if (window.frame && window.frame.sdk) {
-      console.log('Farcaster Frame SDK loaded successfully via CDN');
-    } else if (window.sdk) {
-      console.log('Farcaster Frame SDK loaded successfully via direct access');
-    } else {
-      console.error('Farcaster Frame SDK failed to load');
-    }
-  });
-</script>
+<!-- Load Farcaster Frame SDK from CDN (latest version) -->
+<script type="module" src="https://cdn.jsdelivr.net/npm/@farcaster/frame-sdk@latest/dist/index.min.js"></script>
 <!-- Load our client side code -->
 <script type="module" src="/client.js"></script>
 </head>
@@ -68,9 +65,21 @@
   <p>This is a Farcaster Frame for generating AI images with DALL-E.</p>
   <p>Enter a prompt and click "Generate Image" to create AI artwork that you can mint as an NFT.</p>
   
+  <div id="error-message"></div>
+  
   <div id="loading" class="loading" style="display: none;">
     <p>Loading...</p>
   </div>
 </div>
+
+<script>
+  // Initialize the error handling
+  window.addEventListener('error', function(event) {
+    const errorDiv = document.getElementById('error-message');
+    errorDiv.style.display = 'block';
+    errorDiv.textContent = 'Error: ' + event.message;
+    console.error('Caught error:', event);
+  });
+</script>
 </body>
 </html> 

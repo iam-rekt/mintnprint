@@ -1,39 +1,53 @@
 // Import the Frame SDK (will be loaded via the script tag in HTML)
 async function initFrameApp() {
-  // Wait for the SDK to be available (if loaded via script tag)
+  console.log('Initializing Frame App');
+  
+  // Wait for the SDK to be available with unified approach
   let frameSDK;
+  
   try {
-    // Check if using CDN (accessed via frame.sdk)
+    // Prioritize window.frame.sdk as recommended in docs
     if (window.frame && window.frame.sdk) {
+      console.log('Using window.frame.sdk');
       frameSDK = window.frame.sdk;
-    } else if (window.sdk) {
-      // Fallback to direct SDK access
+    } 
+    // Fallback to window.sdk if available
+    else if (window.sdk) {
+      console.log('Using window.sdk');
       frameSDK = window.sdk;
-    } else {
-      // Fallback attempt to import from node_modules
-      const module = await import('@farcaster/frame-sdk');
-      frameSDK = module.sdk;
+    } 
+    // Final fallback - directly importing the SDK module
+    else {
+      console.log('Attempting to import SDK module');
+      try {
+        const module = await import('@farcaster/frame-sdk');
+        frameSDK = module.default || module.sdk;
+        console.log('Imported SDK module successfully');
+      } catch (importError) {
+        console.error('Failed to import SDK module:', importError);
+      }
     }
 
     if (!frameSDK) {
-      console.error('Frame SDK not available');
+      console.error('Frame SDK not available after all attempts');
+      document.getElementById('app').innerHTML += '<p style="color:red">Frame SDK failed to load. Please try again.</p>';
       return;
     }
     
-    console.log('Frame SDK initialized');
+    console.log('Frame SDK initialized successfully');
     
-    // Mark the app as ready FIRST to hide splash screen as soon as possible
+    // Mark the app as ready to hide splash screen
     try {
       console.log('Calling sdk.actions.ready() to hide splash screen');
       await frameSDK.actions.ready({
-        disableNativeGestures: false // Set to true if your app has custom gestures
+        disableNativeGestures: false
       });
-      console.log('Splash screen hidden');
+      console.log('Splash screen hidden successfully');
     } catch (readyError) {
       console.error('Error hiding splash screen:', readyError);
     }
     
-    // Connect to our server SDK endpoint AFTER ready is called
+    // Connect to server SDK endpoint
     try {
       const response = await fetch('/sdk/connect', {
         method: 'POST',
@@ -49,10 +63,10 @@ async function initFrameApp() {
       if (response.ok) {
         console.log('Connected to server SDK endpoint');
       } else {
-        console.warn('Failed to connect to server SDK endpoint, but continuing');
+        console.warn('Failed to connect to server SDK endpoint:', await response.text());
       }
     } catch (error) {
-      console.warn('Error connecting to server SDK endpoint, but continuing:', error);
+      console.warn('Error connecting to server SDK endpoint:', error);
     }
     
     // Listen for frame events
@@ -72,7 +86,8 @@ async function initFrameApp() {
       document.body.setAttribute('data-theme', theme);
     });
   } catch (error) {
-    console.error('Error initializing Frame SDK:', error);
+    console.error('Error in Frame SDK initialization:', error);
+    document.getElementById('app').innerHTML += '<p style="color:red">Error initializing Frame: ' + error.message + '</p>';
   }
 }
 
