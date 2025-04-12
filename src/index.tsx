@@ -308,7 +308,8 @@ app.frame('/', (c) => {
   // A better approach would use fid or a session identifier
   delete imageStore['user']; 
   
-  const welcomeImageUrl = `${BASE_URL}/welcome.png`;
+  const baseUrl = process.env.BASE_URL || 'https://mintnprintv1.vercel.app';
+  const welcomeImageUrl = `${baseUrl}/welcome.png`;
   
   // This route will handle POST requests from Farcaster frames
   // when users click buttons or submit input
@@ -330,6 +331,7 @@ app.frame('/generate', async (c) => {
   const prompt = inputText || 'A default image prompt';
   const userAddress = c.frameData?.address as `0x${string}` | undefined;
 
+  const baseUrl = process.env.BASE_URL || 'https://mintnprintv1.vercel.app';
   let imageUrl = '';
   let error = null;
 
@@ -342,7 +344,7 @@ app.frame('/generate', async (c) => {
       console.log('[OPENAI_IMAGE] API key not configured, using fallback image');
       
       // Use a placeholder image for testing when neither API is available
-      imageUrl = `${BASE_URL}/test-image.svg`;
+      imageUrl = `${baseUrl}/test-image.svg`;
       
       // Create a test image if it doesn't exist
       try {
