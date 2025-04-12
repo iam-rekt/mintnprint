@@ -229,6 +229,8 @@ app.hono.get('/', (c) => {
   <meta property="fc:frame:post_url" content="${baseUrl}/" />
   <meta property="fc:frame:button:1" content="Generate Image" />
   <meta property="fc:frame:input:text" content="Enter prompt..." />
+  <meta property="og:title" content="AI Image Generator & NFT Minter" />
+  <meta property="og:description" content="Generate AI images with DALL-E and mint them as NFTs from Farcaster" />
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#3557B7">
   <meta name="sdk:endpoint" content="/sdk">
