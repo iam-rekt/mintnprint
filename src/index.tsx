@@ -221,18 +221,47 @@ app.hono.get('/', (c) => {
   return c.body(`<!DOCTYPE html>
 <html>
 <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta property="fc:frame" content="vNext" />
   <meta property="fc:frame:image" content="${baseUrl}/welcome.png" />
+  <meta property="og:image" content="${baseUrl}/welcome.png" />
   <meta property="fc:frame:post_url" content="${baseUrl}/" />
   <meta property="fc:frame:button:1" content="Generate Image" />
   <meta property="fc:frame:input:text" content="Enter prompt..." />
   <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#3557B7">
+  <meta name="sdk:endpoint" content="/sdk">
+  <meta name="sdk:version" content="0.8.0">
   <meta name="miniapp:manifest" content="/sdk/manifest">
   <title>AI Image Generator & NFT Minter</title>
+  <!-- Load Farcaster Frame SDK from CDN -->
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@farcaster/frame-sdk/dist/index.min.js"></script>
+  <script>
+    // Log when the SDK is loaded
+    window.addEventListener('load', function() {
+      if (window.frame && window.frame.sdk) {
+        console.log('Farcaster Frame SDK loaded successfully via CDN');
+      } else if (window.sdk) {
+        console.log('Farcaster Frame SDK loaded successfully via direct access');
+      } else {
+        console.error('Farcaster Frame SDK failed to load');
+      }
+    });
+  </script>
+  <!-- Load our client side code -->
+  <script type="module" src="/client.js"></script>
 </head>
 <body>
-  <h1>AI Image Generator & NFT Minter</h1>
-  <p>Interact with this Frame on Farcaster</p>
+  <div id="app">
+    <h1>AI Image Generator & NFT Minter</h1>
+    <p>This is a Farcaster Frame for generating AI images with DALL-E.</p>
+    <p>Enter a prompt and click "Generate Image" to create AI artwork that you can mint as an NFT.</p>
+    
+    <div id="loading" class="loading" style="display: none;">
+      <p>Loading...</p>
+    </div>
+  </div>
 </body>
 </html>`);
 });
