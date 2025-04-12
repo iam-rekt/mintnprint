@@ -20,7 +20,7 @@
   "description": "",
   "dependencies": {
     "@coinbase/onchainkit": "^0.38.5",
-    "@farcaster/frame-sdk": "^0.8.0",
+    "@farcaster/frame-sdk": "^0.0.34",
     "@hono/node-server": "^1.14.0",
     "axios": "^1.6.7",
     "dotenv": "^16.4.7",
