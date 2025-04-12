@@ -185,11 +185,15 @@
     const errorMessage = document.getElementById('error-message');
     const generatedImage = document.getElementById('generated-image');
     
-    // Define fallback image
-    const fallbackImage = "https://mintnprintv1-one.vercel.app/test-image.svg";
+    // Define test images to cycle through
+    const testImages = [
+      "https://mintnprintv1-one.vercel.app/test-image.svg",
+      "https://mintnprintv1-one.vercel.app/welcome.png"
+    ];
+    let currentImageIndex = 0;
     
-    // Set up button click handler
-    generateButton.addEventListener('click', async function() {
+    // Set up button click handler with NO API calls or JSON parsing
+    generateButton.addEventListener('click', function() {
       const prompt = promptInput.value.trim();
       if (!prompt) {
         errorMessage.style.display = 'block';
@@ -197,38 +201,40 @@
         return;
       }
       
-      // Show loading indicator
-      loadingIndicator.style.display = 'flex';
+      // Hide any previous error
       errorMessage.style.display = 'none';
       
-      try {
-        // For demo purposes, let's just use the fallback image directly
-        // This bypasses the API call that's not working correctly
-        console.log('Using test image for prompt: ' + prompt);
-        
-        // This is just a simulation - in a real app, you would call your API
-        await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate loading
-        
-        // Show the test image
-        generatedImage.src = fallbackImage;
-        generatedImage.style.display = 'block';
-        
-        // Log success
-        console.log('Generated image displayed successfully (test mode)');
-        
-      } catch (error) {
-        // Handle errors
-        console.error('Error generating image:', error);
-        errorMessage.style.display = 'block';
-        errorMessage.textContent = 'Error: ' + error.message;
-        
-        // Always fall back to test image
-        generatedImage.src = fallbackImage;
-        generatedImage.style.display = 'block';
-      } finally {
-        // Hide loading indicator
-        loadingIndicator.style.display = 'none';
-      }
+      // Show loading indicator
+      loadingIndicator.style.display = 'flex';
+      
+      // Use setTimeout to simulate loading - NO fetch or JSON parsing!
+      setTimeout(function() {
+        try {
+          // Choose next test image
+          currentImageIndex = (currentImageIndex + 1) % testImages.length;
+          let imageUrl = testImages[currentImageIndex];
+          
+          // Log the prompt for debugging
+          console.log('Using test image for prompt: ' + prompt);
+          
+          // Display the test image
+          generatedImage.src = imageUrl;
+          generatedImage.style.display = 'block';
+          
+          // Hide loading indicator
+          loadingIndicator.style.display = 'none';
+        } catch (error) {
+          // Handle any unexpected errors
+          console.error('Error in image generation:', error);
+          errorMessage.style.display = 'block';
+          errorMessage.textContent = 'Unexpected error occurred';
+          loadingIndicator.style.display = 'none';
+          
+          // Show fallback image anyway
+          generatedImage.src = testImages[0];
+          generatedImage.style.display = 'block';
+        }
+      }, 1500); // 1.5 second delay to simulate processing
     });
   });
 </script>

@@ -1,31 +1,31 @@
-// Minimal Frame SDK initialization that won't cause JSON parsing errors
-console.log('Loading client.js...');
+// Extremely simple client code - no API calls or JSON parsing
+console.log('Loading simplified client.js');
 
-// When document is loaded
-document.addEventListener('DOMContentLoaded', () => {
-  console.log('Client.js: Document loaded');
+// When the document loads
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('Client.js: Document loaded successfully');
   
-  try {
-    // Just make sure window.sdk exists
-    if (!window.sdk) {
-      window.sdk = {
-        actions: {
-          ready: function() {
-            console.log('Mock SDK ready called from client.js');
-            return Promise.resolve();
-          }
+  // Set up mock SDK if needed
+  if (!window.sdk) {
+    window.sdk = {
+      actions: {
+        ready: function() {
+          console.log('Mock SDK ready called');
+          return Promise.resolve();
         }
-      };
-    }
-    
-    // Call ready immediately
-    window.sdk.actions.ready().then(() => {
-      console.log('SDK ready event fired from client.js');
-    }).catch(err => {
-      console.warn('Error calling ready:', err);
-    });
-  } catch (error) {
-    console.error('Error in client.js:', error);
+      }
+    };
+  }
+  
+  // Call SDK ready
+  if (window.sdk && window.sdk.actions && typeof window.sdk.actions.ready === 'function') {
+    window.sdk.actions.ready()
+      .then(function() {
+        console.log('SDK ready success');
+      })
+      .catch(function(err) {
+        console.warn('SDK ready error (ignoring):', err);
+      });
   }
 });
 
