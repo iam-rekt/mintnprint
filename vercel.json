@@ -5,7 +5,7 @@
   "builds": [
     {
       "src": "dist/index.js",
-      "use": "@vercel/node",
+      "use": "@vercel/node@latest",
       "config": {
         "includeFiles": ["dist/**"]
       }
