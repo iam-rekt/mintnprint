@@ -66,7 +66,7 @@ sdkRouter.get('/manifest', (c) => {
     ],
     miniapp: {
       developer: 'Frame Labs',
-      website: 'https://mintnprintv1.vercel.app',
+      website: process.env.BASE_URL || 'https://mintnprintv1-one.vercel.app',
       category: 'creative',
       permissions: ['notifications']
     }
