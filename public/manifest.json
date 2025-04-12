@@ -1,43 +1,17 @@
 {
   "name": "AI Image Generator & NFT Minter",
-  "short_name": "AI Gen",
-  "description": "Generate AI images and mint them as NFTs from Farcaster",
-  "start_url": "/",
-  "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#3557B7",
-  "icons": [
-    {
-      "src": "https://mintnprintv1-one.vercel.app/welcome.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "https://mintnprintv1-one.vercel.app/welcome.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
-  ],
-  "miniapp": {
-    "developer": "Frame Labs",
-    "website": "https://mintnprintv1-one.vercel.app",
-    "category": "creative",
-    "permissions": ["notifications"]
-  },
+  "version": "next",
+  "icon": "https://mintnprintv1-one.vercel.app/welcome.png",
+  "homepage": "https://mintnprintv1-one.vercel.app/",
+  "description": "Generate AI images with DALL-E and mint them as NFTs from Farcaster",
+  "splashImage": "https://mintnprintv1-one.vercel.app/welcome.png",
+  "splashBackgroundColor": "#3557B7",
   "capabilities": {
-    "frame": {
-      "action": "view",
-      "post_url": "https://mintnprintv1-one.vercel.app/",
-      "input": {
-        "text": {
-          "placeholder": "Enter prompt..."
-        }
-      },
-      "buttons": [
-        {
-          "label": "Generate Image"
-        }
-      ]
-    }
+    "addable": true,
+    "notifications": true
+  },
+  "developer": {
+    "name": "Frame Labs",
+    "url": "https://mintnprintv1-one.vercel.app"
   }
 } 
