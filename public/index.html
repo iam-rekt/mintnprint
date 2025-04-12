@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="fc:frame" content='{"version":"next","imageUrl":"https://mintnprintv1-one.vercel.app/welcome.png","button":{"title":"Generate Image","action":{"type":"launch_frame","url":"https://mintnprintv1-one.vercel.app/","name":"AI Image Generator","splashImageUrl":"https://mintnprintv1-one.vercel.app/welcome.png","splashBackgroundColor":"#3557B7"}}}' />
+<meta name="fc:frame" content='{"version":"1","imageUrl":"https://mintnprintv1-one.vercel.app/welcome.png","button":{"title":"Generate Image","action":{"type":"launch_frame","url":"https://mintnprintv1-one.vercel.app/","name":"AI Image Generator","splashImageUrl":"https://mintnprintv1-one.vercel.app/welcome.png","splashBackgroundColor":"#3557B7"}}}' />
+<meta name="fc:frame:image" content="https://mintnprintv1-one.vercel.app/welcome.png" />
 <meta property="og:image" content="https://mintnprintv1-one.vercel.app/welcome.png" />
 <meta property="og:title" content="AI Image Generator & NFT Minter" />
 <meta property="og:description" content="Generate AI images with DALL-E and mint them as NFTs from Farcaster" />
@@ -187,7 +188,6 @@
     
     // Define test images to cycle through
     const testImages = [
-      "https://mintnprintv1-one.vercel.app/test-image.svg",
       "https://mintnprintv1-one.vercel.app/welcome.png"
     ];
     let currentImageIndex = 0;
