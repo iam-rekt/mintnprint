@@ -1,0 +1,20 @@
+User-agent: *
+Allow: /
+Disallow:
+
+# Specific permissions for Warpcast and other frame preview bots
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: Farcaster
+Allow: /
+
+User-agent: Warpcast
+Allow: /
+
+# Sitemap
+# Replace with your actual domain when deploying
+Sitemap: https://your-actual-domain.com/sitemap.xml 

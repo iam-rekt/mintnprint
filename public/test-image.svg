@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200">
+  <!-- Simple background -->
+  <rect width="100%" height="100%" fill="#142032"/>
+  
+  <!-- Simple cat astronaut -->
+  <g transform="translate(600, 600)">
+    <!-- Helmet -->
+    <circle cx="0" cy="0" r="250" fill="#f0f0f0" stroke="#d0d0d0" stroke-width="20"/>
+    <circle cx="0" cy="0" r="200" fill="#e0f0ff" fill-opacity="0.6"/>
+    
+    <!-- Cat face -->
+    <circle cx="-70" cy="-30" r="40" fill="#555"/> <!-- Left eye -->
+    <circle cx="70" cy="-30" r="40" fill="#555"/> <!-- Right eye -->
+    <path d="M-50,70 Q0,120 50,70" stroke="#555" stroke-width="15" fill="none"/> <!-- Mouth -->
+    
+    <!-- Whiskers -->
+    <path d="M-150,-100 L-80,-60 M150,-100 L80,-60" stroke="#555" stroke-width="10"/>
+    
+    <!-- Stars background -->
+    <g fill="white">
+      <!-- Hard-coded stars instead of using random generation -->
+      <circle cx="-400" cy="-400" r="3" />
+      <circle cx="350" cy="-350" r="2" />
+      <circle cx="-300" cy="400" r="4" />
+      <circle cx="400" cy="300" r="3" />
+      <circle cx="200" cy="-450" r="3" />
+      <circle cx="-450" cy="150" r="2" />
+      <circle cx="0" cy="-500" r="4" />
+      <circle cx="-200" cy="0" r="2" />
+      <circle cx="450" cy="0" r="3" />
+      <circle cx="0" cy="450" r="2" />
+    </g>
+  </g>
+  
+  <!-- Text at bottom -->
+  <text x="600" y="1100" font-family="Arial" font-weight="bold" font-size="60" fill="white" text-anchor="middle">
+    Test Image
+  </text>
+</svg> 
