@@ -32,25 +32,24 @@
       ]
     }
   ],
-  "routes": [
-    { "src": "/.well-known/(.*)", "dest": "/public/.well-known/$1" },
-    { "src": "/welcome.png", "dest": "/public/welcome.png" },
-    { "src": "/test-image.svg", "dest": "/public/test-image.svg" },
-    { "src": "/error-image.svg", "dest": "/public/error-image.svg" },
-    { "src": "/client.js", "dest": "/public/client.js" },
-    { "src": "/manifest.json", "dest": "/public/manifest.json" },
-    { "src": "/generated-*.png", "dest": "/public/generated-$1.png" },
-    { "src": "/favicon.ico", "dest": "/public/favicon.ico" },
-    { "src": "/robots.txt", "dest": "/public/robots.txt" },
-    { "src": "^/sdk.*", "dest": "/dist/index.js" },
-    { "src": "^/api/.*", "dest": "/dist/index.js" },
-    { "src": "^/dev.*", "dest": "/dist/index.js" },
-    { "src": "^/generate.*", "dest": "/dist/index.js" },
-    { "src": "^/mint.*", "dest": "/dist/index.js" },
-    { "src": "^/print.*", "dest": "/dist/index.js" },
-    { "src": "^/f/.*", "dest": "/dist/index.js" },
-    { "src": "/", "dest": "/dist/index.js" },
-    { "handle": "filesystem" },
-    { "src": "/(.*)", "dest": "/public/index.html" }
+  "rewrites": [
+    { "source": "/.well-known/(.*)", "destination": "/public/.well-known/$1" },
+    { "source": "/welcome.png", "destination": "/public/welcome.png" },
+    { "source": "/test-image.svg", "destination": "/public/test-image.svg" },
+    { "source": "/error-image.svg", "destination": "/public/error-image.svg" },
+    { "source": "/client.js", "destination": "/public/client.js" },
+    { "source": "/manifest.json", "destination": "/public/manifest.json" },
+    { "source": "/generated-*.png", "destination": "/public/generated-$1.png" },
+    { "source": "/favicon.ico", "destination": "/public/favicon.ico" },
+    { "source": "/robots.txt", "destination": "/public/robots.txt" },
+    { "source": "/sdk(.*)", "destination": "/dist/index.js" },
+    { "source": "/api/(.*)", "destination": "/dist/index.js" },
+    { "source": "/dev(.*)", "destination": "/dist/index.js" },
+    { "source": "/generate(.*)", "destination": "/dist/index.js" },
+    { "source": "/mint(.*)", "destination": "/dist/index.js" },
+    { "source": "/print(.*)", "destination": "/dist/index.js" },
+    { "source": "/f/(.*)", "destination": "/dist/index.js" },
+    { "source": "/", "destination": "/dist/index.js" },
+    { "source": "/(.*)", "destination": "/public/index.html" }
   ]
 } 
