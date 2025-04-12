@@ -1,6 +1,6 @@
 # AI Image Generator & NFT Minter/Printer Frame
 
-A Farcaster Frame that allows users to generate AI images, mint them as NFTs, and print them as merchandise using crypto wallet payments.
+A Farcaster Frame on Base onchain that allows users to generate AI images, mint them as NFTs, and print them as merchandise using coinbase wallet payments.
 
 ## Features
 
