@@ -215,7 +215,7 @@ app.hono.get('/', (c) => {
   c.header('Access-Control-Allow-Headers', '*');
   
   // Base URL from environment variable or fallback
-  const baseUrl = process.env.BASE_URL || 'https://mintnprintv1.vercel.app';
+  const baseUrl = process.env.BASE_URL || 'https://mintnprintv1-one.vercel.app';
   
   // Minimal HTML for browser visits, letting Frog handle frame logic
   return c.body(`<!DOCTYPE html>
@@ -242,11 +242,65 @@ app.hono.get('/', (c) => {
 </html>`);
 });
 
+// Add a diagnostic endpoint to test image serving
+app.hono.get('/debug-image', (c) => {
+  console.log('[DEBUG_IMAGE] Testing image serving');
+  
+  // Base URL from environment variable or fallback
+  const baseUrl = process.env.BASE_URL || 'https://mintnprintv1-one.vercel.app';
+  const welcomeImageUrl = `${baseUrl}/welcome.png`;
+  const testImageUrl = `${baseUrl}/test-image.svg`;
+  
+  // HTML for testing image serving
+  return c.html(`<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Serving Diagnostic</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+    .image-test { margin-bottom: 30px; border: 1px solid #ccc; padding: 15px; border-radius: 5px; }
+    img { max-width: 100%; height: auto; display: block; margin: 10px 0; }
+    pre { background: #f5f5f5; padding: 10px; overflow: auto; border-radius: 3px; }
+  </style>
+</head>
+<body>
+  <h1>Image Serving Diagnostic</h1>
+  
+  <div class="image-test">
+    <h2>Welcome Image Test</h2>
+    <p>URL: ${welcomeImageUrl}</p>
+    <img src="${welcomeImageUrl}" alt="Welcome Image" onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2ZmMDAwMCIgLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiIGZvbnQtc2l6ZT0iMjQiPkltYWdlIEVycm9yPC90ZXh0Pjwvc3ZnPg=='; this.after(document.createTextNode('❌ Image failed to load'));" />
+  </div>
+  
+  <div class="image-test">
+    <h2>Test Image Test</h2>
+    <p>URL: ${testImageUrl}</p>
+    <img src="${testImageUrl}" alt="Test Image" onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2ZmMDAwMCIgLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiIGZvbnQtc2l6ZT0iMjQiPkltYWdlIEVycm9yPC90ZXh0Pjwvc3ZnPg=='; this.after(document.createTextNode('❌ Image failed to load'));" />
+  </div>
+  
+  <div class="image-test">
+    <h2>Environment Information</h2>
+    <pre>
+BASE_URL: ${process.env.BASE_URL || 'not set'}
+NODE_ENV: ${process.env.NODE_ENV || 'not set'}
+PORT: ${process.env.PORT || '3000 (default)'}
+Has OpenAI API Key: ${process.env.OPENAI_API_KEY ? 'Yes' : 'No'}
+</pre>
+  </div>
+</body>
+</html>`);
+});
+
 // Set up dev tools if not in production
 if (process.env.NODE_ENV !== 'production') {
   // Pass the serveStatic function correctly
   devtools(app, { serveStatic });
 }
+
+// IMPORTANT: Serve static files from public directory for both prod and dev
+app.hono.use('/*', serveStatic({ root: './public' }));
 
 // Error frame component for consistent error display
 function ErrorFrame(message: string) {
@@ -278,14 +332,16 @@ function ErrorFrame(message: string) {
 // Initial frame: Prompt for image generation
 app.frame('/', (c) => {
   console.log('Frame root handler invoked - for frame interactions only');
-  console.log('Request header:', c.req.header());
+  console.log('Request header:', JSON.stringify(c.req.header(), null, 2));
   
   // Reset any stored image for this user when showing the initial frame
   // A better approach would use fid or a session identifier
   delete imageStore['user']; 
   
-  const baseUrl = process.env.BASE_URL || 'https://mintnprintv1.vercel.app';
+  const baseUrl = process.env.BASE_URL || 'https://mintnprintv1-one.vercel.app';
   const welcomeImageUrl = `${baseUrl}/welcome.png`;
+  
+  console.log(`[INITIAL_FRAME] Using welcome image: ${welcomeImageUrl}`);
   
   // This route will handle POST requests from Farcaster frames
   // when users click buttons or submit input
@@ -297,7 +353,7 @@ app.frame('/', (c) => {
     ],
   });
   
-  console.log('Response:', response);
+  console.log('Response:', JSON.stringify(response, null, 2));
   return response;
 });
 
@@ -307,206 +363,81 @@ app.frame('/generate', async (c) => {
   const prompt = inputText || 'A default image prompt';
   const userAddress = c.frameData?.address as `0x${string}` | undefined;
 
-  const baseUrl = process.env.BASE_URL || 'https://mintnprintv1.vercel.app';
+  console.log(`[GENERATE] Received generation request with prompt: "${prompt}"`);
+  console.log(`[GENERATE] User address: ${userAddress || 'Not connected'}`);
+
+  const baseUrl = process.env.BASE_URL || 'https://mintnprintv1-one.vercel.app';
   let imageUrl = '';
   let error = null;
 
-  // Check if we have Google Cloud API credentials
-  if (!process.env.GOOGLE_APPLICATION_CREDENTIALS) {
-    console.log('[GOOGLE_IMAGE] API credentials not configured, using DALL-E instead');
-    
-    // Check if we have OpenAI API key
-    if (!process.env.OPENAI_API_KEY) {
-      console.log('[OPENAI_IMAGE] API key not configured, using fallback image');
-      
-      // Use a placeholder image for testing when neither API is available
-      imageUrl = `${baseUrl}/test-image.svg`;
-      
-      // Create a test image if it doesn't exist
-      try {
-        const testImagePath = path.join(process.cwd(), 'public', 'test-image.svg');
-        try {
-          await fs.promises.stat(testImagePath);
-        } catch {
-          // If it doesn't exist, create it
-          const testSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
-            <defs>
-              <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#4a6bc9" />
-                <stop offset="100%" stop-color="#1c2c5a" />
-              </linearGradient>
-              <radialGradient id="planet" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
-                <stop offset="0%" stop-color="#f5f5f5" />
-                <stop offset="100%" stop-color="#d0d0d0" />
-              </radialGradient>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#bg)" />
-            <!-- Cat Astronaut -->
-            <g transform="translate(512, 512)">
-              <!-- Helmet -->
-              <circle cx="0" cy="0" r="200" fill="#f0f0f0" stroke="#d0d0d0" stroke-width="20" />
-              <circle cx="0" cy="0" r="160" fill="#e0f0ff" opacity="0.6" />
-              <!-- Cat face -->
-              <circle cx="-60" cy="-20" r="30" fill="#555" /> <!-- Left eye -->
-              <circle cx="60" cy="-20" r="30" fill="#555" /> <!-- Right eye -->
-              <path d="M-40,60 Q0,100 40,60" stroke="#555" stroke-width="10" fill="none" /> <!-- Mouth -->
-              <!-- Whiskers -->
-              <path d="M-140,-120 L-80,-60 M140,-120 L80,-60" stroke="#555" stroke-width="10" />
-            </g>
-          </svg>`;
-          await fs.promises.writeFile(testImagePath, testSvg);
-          console.log('[IMAGE_HANDLER] Created test-image.svg for fallback');
-        }
-      } catch (e) {
-        console.error('[IMAGE_HANDLER] Error handling test image:', e);
-      }
-    } else {
-      try {
-        console.log(`[OPENAI_IMAGE] Generating image with prompt: ${prompt}`);
-        
-        // Use OpenAI's DALL-E to generate the image
-        const response = await openai.images.generate({
-          model: "dall-e-3",
-          prompt: prompt,
-          n: 1,
-          size: "1024x1024",
-          quality: "standard",
-          response_format: "url"
-        });
-
-        // Get the image URL from the response
-        if (!response.data || response.data.length === 0) {
-          throw new Error('No image generated');
-        }
-
-        const generatedImage = response.data[0];
-        if (!generatedImage.url) {
-          throw new Error('No image URL in the response');
-        }
-
-        imageUrl = generatedImage.url;
-        
-        // Generate a unique timestamp for the filename
-        const timestamp = Date.now();
-        const imageName = `generated-${timestamp}.png`;
-        const imagePath = path.join(process.cwd(), 'public', imageName);
-        
-        // Download the image
-        const imageResponse = await axios.get(imageUrl, { 
-          responseType: 'arraybuffer',
-          timeout: 15000, // Add timeout
-          validateStatus: (status) => status === 200 // Only accept 200 responses
-        });
-
-        // Validate image before saving
-        const imageBuffer = Buffer.from(imageResponse.data);
-        if (imageBuffer.length < 8 || 
-            imageBuffer[0] !== 0x89 || 
-            imageBuffer[1] !== 0x50 || // P
-            imageBuffer[2] !== 0x4E || // N
-            imageBuffer[3] !== 0x47 || // G
-            imageBuffer[4] !== 0x0D || // CR
-            imageBuffer[5] !== 0x0A || // LF
-            imageBuffer[6] !== 0x1A || // EOF
-            imageBuffer[7] !== 0x0A) { // LF
-          throw new Error('Invalid PNG format received from API');
-        }
-
-        await fs.promises.writeFile(imagePath, imageResponse.data);
-        
-        // Use the saved file URL - referencing the same filename that was saved
-        imageUrl = `${BASE_URL}/${imageName}`;
-        console.log(`[OPENAI_IMAGE] Generated image saved at: ${imageUrl}`);
-      } catch (err) {
-        console.error('[OPENAI_IMAGE] Error generating image:', err);
-        error = err instanceof Error ? err.message : 'Image generation failed';
-        
-        // Use a placeholder image instead of the error image
-        console.log('[OPENAI_IMAGE] Using placeholder image due to error');
-        imageUrl = `${BASE_URL}/test-image.svg`;
-      }
-    }
+  // If no OpenAI API key, use fallback test image
+  if (!process.env.OPENAI_API_KEY) {
+    console.log('[GENERATE] No OpenAI API key configured, using test image');
+    imageUrl = `${baseUrl}/test-image.svg`;
   } else {
     try {
-      console.log(`[GOOGLE_IMAGE] Generating image with prompt: ${prompt}`);
+      console.log(`[OPENAI_IMAGE] Generating image with prompt: ${prompt}`);
       
-      // Declare a local variable for the Google image generation
-      let localImageUrl: string = '';
+      // Use OpenAI's DALL-E to generate the image
+      const response = await openai.images.generate({
+        model: "dall-e-3",
+        prompt: prompt,
+        n: 1,
+        size: "1024x1024",
+        quality: "standard",
+        response_format: "url"
+      });
+
+      // Get the image URL from the response
+      if (!response.data || response.data.length === 0) {
+        throw new Error('No image generated');
+      }
+
+      const generatedImage = response.data[0];
+      if (!generatedImage.url) {
+        throw new Error('No image URL in the response');
+      }
+
+      imageUrl = generatedImage.url;
+      console.log(`[OPENAI_IMAGE] Got image URL: ${imageUrl.substring(0, 50)}...`);
       
+      // Generate a unique timestamp for the filename
+      const timestamp = Date.now();
+      const imageName = `generated-${timestamp}.png`;
+      const imagePath = path.join(process.cwd(), 'public', imageName);
+      
+      // Download the image
+      console.log(`[OPENAI_IMAGE] Downloading image to ${imagePath}`);
       try {
-        // Use OpenAI's DALL-E to generate the image
-        const response = await openai.images.generate({
-          model: "dall-e-3",
-          prompt: prompt,
-          n: 1,
-          size: "1024x1024",
-          quality: "standard",
-          response_format: "url"
-        });
-
-        // Get the image URL from the response
-        if (!response.data || response.data.length === 0) {
-          throw new Error('No image generated');
-        }
-
-        const generatedImage = response.data[0];
-        if (!generatedImage.url) {
-          throw new Error('No image URL in the response');
-        }
-
-        localImageUrl = generatedImage.url;
-        
-        // Generate a unique timestamp for the filename
-        const timestamp = Date.now();
-        const imageName = `generated-${timestamp}.png`;
-        const imagePath = path.join(process.cwd(), 'public', imageName);
-        
-        // Download the image
-        const imageResponse = await axios.get(localImageUrl, { 
+        const imageResponse = await axios.get(imageUrl, { 
           responseType: 'arraybuffer',
-          timeout: 15000, // Add timeout
+          timeout: 30000, // Increased timeout
           validateStatus: (status) => status === 200 // Only accept 200 responses
         });
 
-        // Validate image before saving
-        const imageBuffer = Buffer.from(imageResponse.data);
-        if (imageBuffer.length < 8 || 
-            imageBuffer[0] !== 0x89 || 
-            imageBuffer[1] !== 0x50 || // P
-            imageBuffer[2] !== 0x4E || // N
-            imageBuffer[3] !== 0x47 || // G
-            imageBuffer[4] !== 0x0D || // CR
-            imageBuffer[5] !== 0x0A || // LF
-            imageBuffer[6] !== 0x1A || // EOF
-            imageBuffer[7] !== 0x0A) { // LF
-          throw new Error('Invalid PNG format received from API');
-        }
-
+        // Save the image
         await fs.promises.writeFile(imagePath, imageResponse.data);
         
-        // Use the saved file URL - referencing the same filename that was saved
-        localImageUrl = `${BASE_URL}/${imageName}`;
-        console.log(`[GOOGLE_IMAGE] Generated image saved at: ${localImageUrl}`);
-      } catch (err) {
-        console.error('[GOOGLE_IMAGE] Error generating image:', err);
-        error = err instanceof Error ? err.message : 'Image generation failed';
-        
-        // Use a placeholder image instead of the error image
-        console.log('[GOOGLE_IMAGE] Using placeholder image due to error');
-        localImageUrl = `${BASE_URL}/test-image.svg`;
+        // Use the saved file URL with absolute path
+        imageUrl = `${baseUrl}/${imageName}`;
+        console.log(`[OPENAI_IMAGE] Generated image saved at: ${imageUrl}`);
+      } catch (downloadErr) {
+        console.error('[OPENAI_IMAGE] Error downloading image:', downloadErr);
+        // Still use the direct OpenAI URL if download fails
+        console.log('[OPENAI_IMAGE] Using direct OpenAI URL instead');
       }
-      
-      // Set the final image URL
-      imageUrl = localImageUrl;
     } catch (err) {
-      console.error('[GOOGLE_IMAGE] Error generating image:', err);
+      console.error('[OPENAI_IMAGE] Error generating image:', err);
       error = err instanceof Error ? err.message : 'Image generation failed';
       
-      // Use a placeholder image instead of the error image
-      console.log('[GOOGLE_IMAGE] Using placeholder image due to error');
-      imageUrl = `${BASE_URL}/test-image.svg`;
+      // Use the test image as fallback
+      console.log('[OPENAI_IMAGE] Using test image due to error');
+      imageUrl = `${baseUrl}/test-image.svg`;
     }
   }
+
+  // Log the final image URL
+  console.log(`[GENERATE] Final image URL: ${imageUrl}`);
 
   // Store the image URL regardless of source
   imageStore['user'] = { url: imageUrl };
@@ -529,7 +460,7 @@ app.frame('/generate', async (c) => {
   intents.push(<Button.Reset>Reset</Button.Reset>);
   
   // Success response
-  console.log(`[GENERATE] Serving frame with image URL: ${imageUrl.substring(0, 50)}...`);
+  console.log(`[GENERATE] Serving frame with image URL: ${imageUrl}`);
   return c.res({
     image: imageUrl,
     imageAspectRatio: "1:1",
