@@ -6,7 +6,7 @@
       "memory": 1024
     }
   },
-  "buildCommand": "pnpm run build",
+  "buildCommand": "chmod +x build.sh && ./build.sh",
   "outputDirectory": "dist",
   "installCommand": "pnpm install --no-frozen-lockfile"
 } 

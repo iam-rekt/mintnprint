@@ -3,20 +3,15 @@
 # Exit on error
 set -e
 
-echo "Building application for production..."
+# Log messages with color
+echo -e "\033[0;32mStarting build process...\033[0m"
 
-# Clean up dist directory if it exists
-if [ -d "dist" ]; then
-  echo "Cleaning up dist directory..."
-  rm -rf dist
-fi
+# Build the project
+echo -e "\033[0;32mRunning pnpm build...\033[0m"
+pnpm run build
 
-# Compile TypeScript to JavaScript
-echo "Compiling TypeScript..."
-npx tsc
+# Replace placeholders in frame.html with BASE_URL
+echo -e "\033[0;32mReplacing placeholders in frame.html with BASE_URL: $BASE_URL\033[0m"
+sed -i "s|\${BASE_URL}|$BASE_URL|g" dist/public/frame.html
 
-# Copy public directory to dist
-echo "Copying public directory..."
-cp -r public dist/
-
-echo "Build completed successfully!" 
+echo -e "\033[0;32mBuild completed successfully\033[0m" 
