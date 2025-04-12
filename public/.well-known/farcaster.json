@@ -1,15 +1,15 @@
 {
+  "$$schema": "https://json.schemastore.org/fancast-manifest-1.0.json",
   "name": "AI Image Generator & NFT Minter",
-  "version": "next",
-  "icon": "https://mintnprintv1-one.vercel.app/welcome.png",
-  "homepage": "https://mintnprintv1-one.vercel.app/",
+  "version": "vNext",
   "description": "Generate AI images with DALL-E and mint them as NFTs from Farcaster",
-  "image": "https://mintnprintv1-one.vercel.app/welcome.png",
-  "splashImage": "https://mintnprintv1-one.vercel.app/welcome.png",
-  "splashBackgroundColor": "#3557B7",
-  "capabilities": {
-    "addable": true,
-    "notifications": true
+  "icon_url": "https://mintnprintv1-one.vercel.app/welcome.png",
+  "image_url": "https://mintnprintv1-one.vercel.app/welcome.png",
+  "app_url": "https://mintnprintv1-one.vercel.app/",
+  "frames": {
+    "enabled": true,
+    "recommended_frame_height": 600,
+    "default_url": "https://mintnprintv1-one.vercel.app/"
   },
   "developer": {
     "name": "Frame Labs",
