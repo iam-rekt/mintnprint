@@ -193,6 +193,8 @@ app.hono.get('/public/*', async (c) => {
       contentType = 'image/png';
     } else if (ext === '.html') {
       contentType = 'text/html';
+    } else if (ext === '.js') {
+      contentType = 'application/javascript';
     }
 
     // Read file and serve
@@ -208,6 +210,60 @@ app.hono.get('/public/*', async (c) => {
   }
 });
 // --- END: Manual Static File Handler ---
+
+// Serve client.js from the root path
+app.hono.get('/client.js', async (c) => {
+  console.log(`[JS_HANDLER] Serving client.js file`);
+  const filePath = path.join(process.cwd(), 'public', 'client.js');
+  
+  try {
+    const fileContent = await fs.promises.readFile(filePath);
+    c.header('Content-Type', 'application/javascript');
+    c.header('Access-Control-Allow-Origin', '*');
+    
+    console.log(`[JS_HANDLER] Successfully served client.js`);
+    return c.body(fileContent);
+  } catch (error: any) {
+    console.error(`[JS_HANDLER] Error serving client.js: ${error.message}`);
+    return c.notFound();
+  }
+});
+
+// Serve frame.html from the root path for direct access
+app.hono.get('/frame.html', async (c) => {
+  console.log(`[HTML_HANDLER] Serving frame.html file`);
+  const filePath = path.join(process.cwd(), 'public', 'frame.html');
+  
+  try {
+    const fileContent = await fs.promises.readFile(filePath);
+    c.header('Content-Type', 'text/html');
+    c.header('Access-Control-Allow-Origin', '*');
+    
+    console.log(`[HTML_HANDLER] Successfully served frame.html`);
+    return c.body(fileContent);
+  } catch (error: any) {
+    console.error(`[HTML_HANDLER] Error serving frame.html: ${error.message}`);
+    return c.notFound();
+  }
+});
+
+// Serve manifest.json from the root path
+app.hono.get('/manifest.json', async (c) => {
+  console.log(`[MANIFEST_HANDLER] Serving manifest.json file`);
+  const filePath = path.join(process.cwd(), 'public', 'manifest.json');
+  
+  try {
+    const fileContent = await fs.promises.readFile(filePath);
+    c.header('Content-Type', 'application/json');
+    c.header('Access-Control-Allow-Origin', '*');
+    
+    console.log(`[MANIFEST_HANDLER] Successfully served manifest.json`);
+    return c.body(fileContent);
+  } catch (error: any) {
+    console.error(`[MANIFEST_HANDLER] Error serving manifest.json: ${error.message}`);
+    return c.notFound();
+  }
+});
 
 // --- START: Dedicated Image Handler ---
 app.hono.get('/image', async (c) => {

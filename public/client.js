@@ -3,8 +3,11 @@ async function initFrameApp() {
   // Wait for the SDK to be available (if loaded via script tag)
   let frameSDK;
   try {
-    // Check if using iframe.js
-    if (window.sdk) {
+    // Check if using CDN (accessed via frame.sdk)
+    if (window.frame && window.frame.sdk) {
+      frameSDK = window.frame.sdk;
+    } else if (window.sdk) {
+      // Fallback to direct SDK access
       frameSDK = window.sdk;
     } else {
       // Fallback attempt to import from node_modules
@@ -19,7 +22,18 @@ async function initFrameApp() {
     
     console.log('Frame SDK initialized');
     
-    // Connect to our server SDK endpoint
+    // Mark the app as ready FIRST to hide splash screen as soon as possible
+    try {
+      console.log('Calling sdk.actions.ready() to hide splash screen');
+      await frameSDK.actions.ready({
+        disableNativeGestures: false // Set to true if your app has custom gestures
+      });
+      console.log('Splash screen hidden');
+    } catch (readyError) {
+      console.error('Error hiding splash screen:', readyError);
+    }
+    
+    // Connect to our server SDK endpoint AFTER ready is called
     try {
       const response = await fetch('/sdk/connect', {
         method: 'POST',
@@ -40,12 +54,6 @@ async function initFrameApp() {
     } catch (error) {
       console.warn('Error connecting to server SDK endpoint, but continuing:', error);
     }
-    
-    // Hide the splash screen when the app is ready
-    await frameSDK.actions.ready({
-      disableNativeGestures: false // Set to true if your app has custom gestures
-    });
-    console.log('Splash screen hidden');
     
     // Listen for frame events
     frameSDK.registerEvents({

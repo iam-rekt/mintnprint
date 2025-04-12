@@ -42,8 +42,20 @@
     height: 100vh;
   }
 </style>
-<!-- Load Farcaster Frame SDK -->
-<script type="module" src="https://framesjs.org/iframe.js"></script>
+<!-- Load Farcaster Frame SDK from CDN -->
+<script type="module" src="https://cdn.jsdelivr.net/npm/@farcaster/frame-sdk/dist/index.min.js"></script>
+<script>
+  // Log when the SDK is loaded
+  window.addEventListener('load', function() {
+    if (window.frame && window.frame.sdk) {
+      console.log('Farcaster Frame SDK loaded successfully via CDN');
+    } else if (window.sdk) {
+      console.log('Farcaster Frame SDK loaded successfully via direct access');
+    } else {
+      console.error('Farcaster Frame SDK failed to load');
+    }
+  });
+</script>
 <!-- Load our client side code -->
 <script type="module" src="/client.js"></script>
 </head>
