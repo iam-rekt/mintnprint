@@ -226,6 +226,8 @@ app.hono.get('/', (c) => {
   <meta property="fc:frame:post_url" content="${baseUrl}/" />
   <meta property="fc:frame:button:1" content="Generate Image" />
   <meta property="fc:frame:input:text" content="Enter prompt..." />
+  <link rel="manifest" href="/manifest.json">
+  <meta name="miniapp:manifest" content="/sdk/manifest">
   <title>AI Image Generator & NFT Minter</title>
 </head>
 <body>

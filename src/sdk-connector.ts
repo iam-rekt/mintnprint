@@ -63,7 +63,13 @@ sdkRouter.get('/manifest', (c) => {
         sizes: '512x512',
         type: 'image/png'
       }
-    ]
+    ],
+    miniapp: {
+      developer: 'Frame Labs',
+      website: 'https://mintnprintv1.vercel.app',
+      category: 'creative',
+      permissions: ['notifications']
+    }
   });
 });
 
